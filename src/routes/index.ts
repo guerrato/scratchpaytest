@@ -1,5 +1,7 @@
 import { Response, Router } from 'express'
 import httpResponse from '../lib/responses'
+import userRoute from './users'
+
 const router = Router()
 
 /* GET home page. */
@@ -8,7 +10,7 @@ const router = Router()
 // })
 
 router.get('/', (_, res: Response) => res.json(httpResponse({ message: 'OK' })))
-
+router.use('/user', userRoute)
 router.use((_, res: Response) => res.status(404).json(httpResponse({ error: 'Endpoint not found' })))
 
 export default router

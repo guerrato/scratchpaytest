@@ -1,7 +1,7 @@
 import request from 'supertest'
 import app from '../src/app'
 
-describe('API Integration Test', () => {
+describe('Basic API Integration Test', () => {
   it('should include "OK" in the response root endpoint', async () => {
     const response = await request(app).get('/')
     expect(response.status).toBe(200)

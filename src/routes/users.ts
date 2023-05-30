@@ -1,9 +1,9 @@
-import express from 'express'
+import express, { Request, Response } from 'express'
+import httpResponse from '../lib/responses'
+import UserController from '../controllers/userController'
 const router = express.Router()
 
 /* GET users listing. */
-router.get('/', function (req, res, next) {
-  res.send('respond with a resource')
-})
+router.post('/', (req: Request, res: Response) => UserController.login(req, res))
 
 export default router

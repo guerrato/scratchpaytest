@@ -1,13 +1,13 @@
 import { Response } from 'express'
 
-type HTTPResponse<T> = {
+export type HTTPResponse<T> = {
   success: boolean
   message?: string
   data?: T | null | undefined
   error?: string
 }
 
-type ResponseContent<T> = Omit<HTTPResponse<T>, 'success'>
+export type ResponseContent<T> = Omit<HTTPResponse<T>, 'success'>
 
 const httpResponse = <T>(response: ResponseContent<T>): HTTPResponse<T> => {
   const { data, error, message } = response
