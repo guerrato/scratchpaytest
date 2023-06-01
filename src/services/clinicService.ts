@@ -71,10 +71,10 @@ function isValidClinic(clinic: Clinic, searchOptions: SearchOptions): boolean {
     if (state.length > 2) {
       if (clinic.stateName.toLowerCase() !== state.toLowerCase()) {
         include = false
-      } else {
-        if (stateNamesMap[clinic.stateName].toLowerCase() !== state.toLowerCase()) {
-          include = false
-        }
+      }
+    } else {
+      if (stateNamesMap[clinic.stateName]?.toLowerCase() !== state.toLowerCase()) {
+        include = false
       }
     }
   }

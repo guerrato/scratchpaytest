@@ -187,4 +187,44 @@ describe('GET /clinic/search', () => {
     expect(response.body.data.currentPage).toBe(page)
     expect(response.body.data.limit).toBe(limit)
   })
+
+  it('should return clinics by state name', async () => {
+    const state = 'South Carolina'
+    const page = 1
+    const limit = 10
+
+    const response = await request(app).get('/clinic/search').query({ state, page, limit })
+
+    expect(response.status).toBe(200)
+    expect(response.body.data.results.length).toBeGreaterThan(0)
+
+    for (const clinic of response.body.data.results) {
+      expect(clinic.stateName).toEqual(expect.stringMatching(/South Carolina/i))
+    }
+
+    expect(response.body.data.totalResults).toBeGreaterThan(0)
+    expect(response.body.data.totalPages).toBeGreaterThanOrEqual(1)
+    expect(response.body.data.currentPage).toBe(page)
+    expect(response.body.data.limit).toBe(limit)
+  })
+
+  it('should return clinics by state acronym', async () => {
+    const state = 'FL'
+    const page = 1
+    const limit = 10
+
+    const response = await request(app).get('/clinic/search').query({ state, page, limit })
+
+    expect(response.status).toBe(200)
+    expect(response.body.data.results.length).toBeGreaterThan(0)
+
+    for (const clinic of response.body.data.results) {
+      expect(clinic.stateName).toEqual(expect.stringMatching(/Florida/i))
+    }
+
+    expect(response.body.data.totalResults).toBeGreaterThan(0)
+    expect(response.body.data.totalPages).toBeGreaterThanOrEqual(1)
+    expect(response.body.data.currentPage).toBe(page)
+    expect(response.body.data.limit).toBe(limit)
+  })
 })
