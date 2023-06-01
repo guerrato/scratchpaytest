@@ -7,7 +7,7 @@
     "dev": "./node_modules/nodemon/bin/nodemon.js -e ts --exec \"npm run build && npm start \"",
     "build": "rm -rf ./dist && npm run format && tsc && ./build.sh",
     "start": "node ./dist/www",
-    "test": "jest"
+    "test": "jest --collect-coverage"
   },
   "dependencies": {
     "chance": "^1.1.11",

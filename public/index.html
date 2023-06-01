@@ -1,13 +1,290 @@
+<!DOCTYPE html>
 <html>
 
 <head>
-  <title>Express</title>
+  <meta charset="UTF-8">
+  <title>ScratchPay Code Challenge - API Documentation</title>
   <link rel="stylesheet" href="/stylesheets/style.css">
 </head>
 
 <body>
-  <h1>Express</h1>
-  <p>Welcome to Express</p>
+  <h1>ScratchPay Code Challenge</h1>
+
+  <h2>RESTful API Documentation</h2>
+
+  <p>
+    This document presents the result of the ScratchPay code challenge, showcasing the RESTful API developed using
+    ExpressJS. The API is designed to meet the specified requirements and incorporates a range of features to ensure a
+    robust and efficient solution.
+  </p>
+
+  <p>
+    The ScratchPay RESTful API leverages the power of ExpressJS to provide a scalable and performant backend for clinic
+    provider search. It follows the principles of REST architecture, utilizing HTTP methods and status codes for
+    communication with resources. The API is stateless, ensuring that each request contains all the necessary
+    information for processing.
+  </p>
+
+  <p>
+    You can access the project and its source code on the GitHub repository: <a
+      href="https://github.com/guerrato/scratchpaytest">https://github.com/guerrato/scratchpaytest</a>. The repository
+    serves as a central hub for collaboration, enabling you to review the code, contribute, and provide feedback.
+  </p>
+
+  <p>
+    Throughout this documentation, you will find comprehensive details about the API's RESTful properties, an example of
+    an authentication endpoint, various search endpoint examples, information about the tests and code documentation,
+    integration of API documentation with Swagger, Docker support for easy containerization, and integration with CI/CD
+    using GitHub Actions.
+  </p>
+
+  <p>
+    By exploring this documentation and reviewing the project on GitHub, you will gain a comprehensive understanding of
+    the ScratchPay RESTful API and its capabilities.
+  </p>
+
+  <h3>API RESTful Props</h3>
+
+  <ul>
+    <li>The API follows the principles of REST (Representational State Transfer) architecture.</li>
+    <li>It utilizes the HTTP methods and status codes for communication and interaction with resources.</li>
+    <li>The API provides a stateless communication mechanism, where each request contains all the necessary information.
+    </li>
+    <li>It supports the JSON format for data representation.</li>
+  </ul>
+
+  <h3>Authentication Endpoint Example</h3>
+
+  <ul>
+    <li>Endpoint: <code>/user</code></li>
+    <li>Method: <code>POST</code></li>
+    <li>Request Body:
+      <pre>
+{
+  "username": "user1",
+  "password": "password1"
+}
+      </pre>
+    </li>
+    <li>Response:
+      <ul>
+        <li>Success (200 OK):
+          <pre>
+{
+  "success": true,
+  "message": "Use the token in data into x-auth-token for authenticated routes",
+  "data": "5f8a3b76-4998-4e22-a3b7-84f22c9a12d3"
+}
+          </pre>
+        </li>
+        <li>Unauthorized (401 Unauthorized):
+          <pre>
+{ "success": false, "error": "Invalid credentials" }
+          </pre>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3>Search Endpoint Examples</h3>
+
+  <p>
+    The API provides a search endpoint that allows searching for clinic providers based on various criteria.
+  </p>
+
+  <ul>
+    <li>Endpoint: <code>/clinic/search</code></li>
+    <li>Method: <code>GET</code></ li>
+    <li>Parameters:
+      <ul>
+        <li><code>q</code> (optional): Used for searching by clinic name</li>
+        <li><code>state</code> (optional): Used for filtering by state (accepts state name or acronym)</li>
+        <li><code>from</code> (optional): Clinic opening time (format: "HH:mm")</li>
+        <li><code>to</code> (optional): Clinic closing time (format: "HH:mm")</li>
+        <li><code>type</code> (optional): Set the clinic type ("vet" or "dental")</li>
+        <li><code>page</code> (optional): Select the page of pagination</li>
+        <li><code>limit</code> (optional): Select the limit of items to be returned</li>
+      </ul>
+    </li>
+  </ul>
+
+  <p>Example requests:</p>
+
+  <ul>
+    <li>Search by clinic name:
+      <ul>
+        <li>Request: <code>GET /clinic/search?q=Clinic%20A</code></li>
+        <li>Response:
+          <pre>
+{
+  "results": [
+    {
+      "id": 1,
+      "name": "Clinic A",
+      "state": "California",
+      "availability": "09:00-17:00"
+    }
+  ]
+}
+          </pre>
+        </li>
+      </ul>
+    </li>
+    <li>Search by state and availability:
+      <ul>
+        <li>Request: <code>GET /clinic/search?state=CA&amp;from=09:00&amp;to=17:00</code></li>
+        <li>Response:
+          <pre>
+{
+  "results": [
+    {
+      "name": "Clinic A",
+      "state": "California",
+      "availability": "09:00-17:00",
+      "type": "dental"
+    },
+    {
+      "name": "Clinic B",
+      "state": "California",
+      "availability": "10:00-18:00",
+      "type": "dental"
+    }
+  ]
+}
+          </pre>
+        </li>
+      </ul>
+    </li>
+    <li>Search with pagination:
+      <ul>
+        <li>Request: <code>GET /clinic/search?state=CA&amp;page=2&amp;limit=10</code></li>
+        <li>Response:
+          <pre>
+{
+  "results": [
+    {
+      "name": "Clinic K",
+      "state": "California",
+      "availability": "09:00-17:00",
+      "type": "vet"
+    },
+    {
+      "name": "Clinic L",
+      "state": "California",
+      "availability": "10:00-18:00",
+      "type": "dental"
+    },
+    ...
+  ],
+  "page": 2,
+  "totalPages": 5
+}
+          </pre>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <p>Please note that the <code>x-auth-token</code> header with the value of
+    <code>'5f8a3b76-4998-4e22-a3b7-84f22c9a12d3'</code> should be included in the request header for authentication.
+  </p>
+
+  <h3>Tests</h3>
+
+  <p>
+    The API is thoroughly tested to ensure its correctness and functionality. A comprehensive
+
+    test suite is created using a testing framework (e.g., Jest). The tests cover various scenarios, including positive
+    and negative cases, edge cases, and different input combinations. The test suite also includes tests for
+    authentication and search endpoints.
+  </p>
+
+  <p>
+    To run the tests and get test coverage statistics, execute the following command in the project directory:
+  </p>
+
+  <pre><code>npm test</code></pre>
+
+  <p>
+    The command will run the test suite and provide a summary of the test results, including the number of passed and
+    failed tests. Additionally, it will generate coverage reports indicating the percentage of code coverage achieved by
+    the tests. These coverage reports provide insights into which parts of the codebase are adequately covered by tests
+    and highlight areas that may require additional testing.
+  </p>
+
+  <p>
+    By running the tests and reviewing the coverage statistics, you can assess the effectiveness of the test suite in
+    ensuring the correctness and stability of the API.
+  </p>
+
+  <h3>Code Documentation</h3>
+
+  <p>
+    The codebase includes documentation to improve readability and maintainability. The files are documented, providing
+    explanations and descriptions of the purpose and functionality of each module, class, and function. The
+    documentation aids in understanding the code by providing context and insights into the code's structure and
+    implementation.
+  </p>
+
+  <p>
+    By documenting the code, it becomes easier for developers to navigate and comprehend the codebase. They can quickly
+    grasp the functionality of different components, their dependencies, and how they interact with each other. This
+    promotes better collaboration, code reuse, and maintenance of the API.
+  </p>
+
+  <h3>API Documentation with Swagger</h3>
+
+  <p>
+    The API documentation is generated using Swagger, which provides an interactive interface to explore and interact
+    with the API endpoints. The codebase includes Swagger annotations that describe the API's structure, endpoints,
+    parameters, and responses.
+  </p>
+
+  <p>
+    To access the Swagger documentation page, navigate to the <a href="/docs">/docs</a> route of the API. This will present a
+    user-friendly interface where you can browse the available endpoints, view their descriptions, and test them by
+    providing the required parameters. The Swagger documentation simplifies the process of understanding and working
+    with the API, making it easier to integrate and utilize its features.
+  </p>
+
+  <p>
+    By utilizing Swagger for API documentation, developers and users can gain insights into the available endpoints,
+    their input requirements, and the expected output. This enhances the overall user experience and facilitates the
+    integration of the API into various client applications.
+  </p>
+
+  <h3>Docker</h3>
+
+  <p>
+    The project includes Docker support for easy containerization and deployment. Docker enables consistent and isolated
+    environments across different systems. With the provided Docker configuration, the API can be easily packaged into a
+    Docker image, allowing for seamless deployment and scalability.
+  </p>
+
+  <h3>CI/CD</h3>
+
+  <p>
+    The project includes an implementation for Continuous Integration (CI) using GitHub Actions. The CI setup ensures
+    that the codebase is automatically built, tested, and validated on each commit or pull request. This helps maintain
+    code quality, catch issues early, and provide feedback to the development team. Continuous Deployment (CD) can also
+    be integrated with the CI process to automatically deploy the API to a staging or production environment based on
+    predefined rules and conditions.
+  </p>
+
+  <hr />
+
+  <p>
+    The presented API implementation successfully meets the requirements outlined in the initial markdown. It provides a
+    RESTful API with authentication and search functionality for clinic providers. The API is well-tested, documented,
+    and includes features
+
+    like Swagger integration, Docker support, and CI/CD with GitHub Actions. The provided GitHub repository allows for
+    collaboration, feedback, and further improvements to the project.
+  </p>
+
+  <p>
+    If you have any additional questions or need further assistance, please feel free to ask.
+  </p>
 </body>
 
 </html>
