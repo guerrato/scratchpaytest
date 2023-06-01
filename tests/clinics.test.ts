@@ -7,6 +7,13 @@ import express from 'express'
 import { searchClinic } from '../src/services/clinicService'
 import { Clinic } from '../src/models/clinic'
 
+function isTimeValid(from: string, to: string): boolean {
+  const fromTime = new Date(`2023-06-01T${from}`)
+  const toTime = new Date(`2023-06-01T${to}`)
+
+  return toTime > fromTime
+}
+
 /* describe('Clinic Endpoint', () => {
   let clinicList: Clinic[];
 
@@ -68,9 +75,10 @@ describe('GET /clinic/search', () => {
     expect(response.body.data.results).toEqual([])
     expect(response.body.data.totalResults).toBe(0)
     expect(response.body.data.totalPages).toBe(0)
-    expect(response.body.data.currentPage).toBe(0)
-    expect(response.body.data.limit).toBe(0)
+    expect(response.body.data.currentPage).toBe(1)
+    expect(response.body.data.limit).toBe(10)
   })
+
   it('should return search results for "mayo clinic" with pagination', async () => {
     const searchTerm = 'mayo clinic'
     const page = 1
@@ -94,7 +102,32 @@ describe('GET /clinic/search', () => {
   })
 
   it('should return search results for "MAYO CLINIC" with pagination', async () => {
-    const searchTerm = 'MAYO CLINIC'
+    const searchTerm = 'oracle'
+    const page = 1
+    const limit = 10
+
+    const response = await request(app).get('/clinic/search').query({ q: searchTerm, page, limit })
+
+    expect(response.status).toBe(200)
+    expect(response.body.data.results).toEqual([
+      {
+        name: 'Oracle Corp',
+        availability: {
+          from: '02:07',
+          to: '23:31',
+        },
+        stateName: 'Rhode Island',
+        type: 'vet',
+      },
+    ])
+    expect(response.body.data.totalResults).toBe(1)
+    expect(response.body.data.totalPages).toBe(1)
+    expect(response.body.data.currentPage).toBe(1)
+    expect(response.body.data.limit).toBe(10)
+  })
+
+  it('should have correct name, stateName, and availability for each clinic', async () => {
+    const searchTerm = 'mayo clinic'
     const page = 1
     const limit = 10
 
@@ -113,5 +146,26 @@ describe('GET /clinic/search', () => {
     expect(response.body.data.totalPages).toBe(1)
     expect(response.body.data.currentPage).toBe(1)
     expect(response.body.data.limit).toBe(10)
+
+    const [clinic] = response.body.data.results
+    expect(clinic.name).toBeDefined()
+    expect(typeof clinic.name).toBe('string')
+
+    expect(clinic.stateName).toBeDefined()
+    expect(typeof clinic.stateName).toBe('string')
+
+    expect(clinic.availability).toBeDefined()
+    expect(typeof clinic.availability).toBe('object')
+
+    expect(clinic.availability.from).toBeDefined()
+    expect(typeof clinic.availability.from).toBe('string')
+    expect(clinic.availability.from).toMatch(/^\d{2}:\d{2}$/)
+
+    expect(clinic.availability.to).toBeDefined()
+    expect(typeof clinic.availability.to).toBe('string')
+    expect(clinic.availability.to).toMatch(/^\d{2}:\d{2}$/)
+
+    const { from, to } = clinic.availability
+    expect(isTimeValid(from, to)).toBe(true)
   })
 })

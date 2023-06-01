@@ -30,9 +30,22 @@ const FILE_PATH = path.join(__dirname, '../database/clinics.json')
 
 function formatData(data: any): Clinic {
   const { name, clinicName, stateName, stateCode, availability, opening, type } = data
+  let { from, to } = availability ?? opening
+
+  if (from) {
+    const hour: string = from.split(':')[0]
+    const minute: string = from.split(':')[1]
+    from = `${hour.padStart(2, '0')}:${minute.padStart(2, '0')}`
+  }
+  if (to) {
+    const hour: string = to.split(':')[0]
+    const minute: string = to.split(':')[1]
+    to = `${hour.padStart(2, '0')}:${minute.padStart(2, '0')}`
+  }
+
   const clinic = {
     name: name ?? clinicName,
-    availability: availability ?? opening,
+    availability: { from, to },
     stateName: stateName ?? getStateNameByValue(stateCode),
     type,
   }

@@ -1,3 +1,5 @@
 bin/
+dist/
+coverage/
 node_modules/
 .gitlab-ci.yml
