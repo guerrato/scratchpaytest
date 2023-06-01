@@ -81,37 +81,27 @@ function isValidClinic(clinic: Clinic, searchOptions: SearchOptions): boolean {
 
   // Filter by openning time
   if (from) {
-    const availabilityFrom = clinic.availability.from
-    const hour = parseInt(availabilityFrom.split(':')[0])
-    const minute = parseInt(availabilityFrom.split(':')[1])
+    let [hour, minute] = from?.split(':')
+    let [clinicHour, clinicMinute] = clinic.availability.from?.split(':')
 
-    const fromHour = parseInt(from.split(':')[0])
-    const fromMinute = parseInt(from.split(':')[1])
+    const fromTime = new Date(`2023-06-01T${hour.padStart(2, '0')}:${minute.padStart(2, '0')}`)
+    const clinicTime = new Date(`2023-06-01T${clinicHour.padStart(2, '0')}:${clinicMinute.padStart(2, '0')}`)
 
-    if (fromHour < hour) {
+    if (clinicTime > fromTime) {
       include = false
-    } else {
-      if (fromHour === hour && fromMinute < minute) {
-        include = false
-      }
     }
   }
 
   // Filter by closing time
   if (to) {
-    const availabilityTo = clinic.availability.to
-    const hour = parseInt(availabilityTo.split(':')[0])
-    const minute = parseInt(availabilityTo.split(':')[1])
+    let [hour, minute] = to?.split(':')
+    let [clinicHour, clinicMinute] = clinic.availability.to?.split(':')
 
-    const toHour = parseInt(to.split(':')[0])
-    const toMinute = parseInt(to.split(':')[1])
+    const toTime = new Date(`2023-06-01T${hour.padStart(2, '0')}:${minute.padStart(2, '0')}`)
+    const clinicTime = new Date(`2023-06-01T${clinicHour.padStart(2, '0')}:${clinicMinute.padStart(2, '0')}`)
 
-    if (toHour > hour) {
+    if (clinicTime < toTime) {
       include = false
-    } else {
-      if (toHour === hour && toMinute > minute) {
-        include = false
-      }
     }
   }
 

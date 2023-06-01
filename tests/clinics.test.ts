@@ -14,6 +14,13 @@ function isTimeValid(from: string, to: string): boolean {
   return toTime > fromTime
 }
 
+function isValidAvailability(timeA: string, timeB: string): boolean {
+  const dateA = new Date(`2023-06-01T${timeA}`)
+  const dateB = new Date(`2023-06-01T${timeB}`)
+
+  return dateB >= dateA
+}
+
 describe('GET /clinic/search', () => {
   it('should return search results with pagination', async () => {
     const searchTerm = 'test'
@@ -220,6 +227,72 @@ describe('GET /clinic/search', () => {
 
     for (const clinic of response.body.data.results) {
       expect(clinic.stateName).toEqual(expect.stringMatching(/Florida/i))
+    }
+
+    expect(response.body.data.totalResults).toBeGreaterThan(0)
+    expect(response.body.data.totalPages).toBeGreaterThanOrEqual(1)
+    expect(response.body.data.currentPage).toBe(page)
+    expect(response.body.data.limit).toBe(limit)
+  })
+
+  it('should return 400 error with invalid availability format message', async () => {
+    const invalidFromFilter = '10' // Invalid availability.from format
+    const page = 1
+    const limit = 10
+
+    const response = await request(app).get('/clinic/search').query({ from: invalidFromFilter, page, limit })
+
+    expect(response.status).toBe(400)
+    expect(response.body.success).toBe(false)
+    expect(response.body.error).toBe('Invalid "from" filter format. It must be in HH:mm format')
+  })
+
+  it('should return 400 error with invalid availability format message for "to" filter', async () => {
+    const invalidToFilter = '20' // Invalid availability.to format
+    const page = 1
+    const limit = 10
+
+    const response = await request(app).get('/clinic/search').query({ to: invalidToFilter, page, limit })
+
+    expect(response.status).toBe(400)
+    expect(response.body.success).toBe(false)
+    expect(response.body.error).toBe('Invalid "to" filter format. It must be in HH:mm format')
+  })
+
+  it('should return clinics with availability.from lower or equal to the filter', async () => {
+    const fromFilter = '10:00' // Filter for availability.from
+    const page = 1
+    const limit = 200
+
+    const response = await request(app).get('/clinic/search').query({ from: fromFilter, page, limit })
+
+    expect(response.status).toBe(200)
+    expect(response.body.data.results.length).toBeGreaterThan(0)
+
+    for (const clinic of response.body.data.results) {
+      const clinicFrom = clinic.availability.from
+      expect(isValidAvailability(clinicFrom, fromFilter)).toBe(true)
+    }
+
+    expect(response.body.data.totalResults).toBeGreaterThan(0)
+    expect(response.body.data.totalPages).toBeGreaterThanOrEqual(1)
+    expect(response.body.data.currentPage).toBe(page)
+    expect(response.body.data.limit).toBe(limit)
+  })
+
+  it('should return clinics with availability.to greater or equal to the filter', async () => {
+    const toFilter = '20:00' // Filter for availability.to
+    const page = 1
+    const limit = 10
+
+    const response = await request(app).get('/clinic/search').query({ to: toFilter, page, limit })
+
+    expect(response.status).toBe(200)
+    expect(response.body.data.results.length).toBeGreaterThan(0)
+
+    for (const clinic of response.body.data.results) {
+      const clinicTo = clinic.availability.to
+      expect(isValidAvailability(toFilter, clinicTo)).toBe(true)
     }
 
     expect(response.body.data.totalResults).toBeGreaterThan(0)
