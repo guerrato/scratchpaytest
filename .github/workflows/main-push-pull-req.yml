@@ -51,7 +51,7 @@ jobs:
       #     password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker image
-        run: docker build . --file Dockerfile --tag sratchpay_codeChallenge:$(date +%s)
+        run: docker build . --file Dockerfile --tag sratchpay_code_challenge:$(date +%s)
 
       - name: Push Docker image
         run: echo 'Here goes the step of push the image to any repository'
