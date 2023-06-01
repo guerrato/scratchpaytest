@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express'
 import httpResponse from '../lib/responses'
 import ClinicController from '../controllers/clinicController'
+import authenticate from '../middlewares/authenticate'
 const router = express.Router()
 
 /* GET clinic listing. */
@@ -10,6 +11,11 @@ const router = express.Router()
  *   get:
  *     summary: Search clinics based by filters and returns them paginated
  *     parameters:
+ *     - in: header
+ *       name: x-auth-token
+ *       type: string
+ *       required: true
+ *       description: "use '5f8a3b76-4998-4e22-a3b7-84f22c9a12d3' if you want to test the authentication"
  *     - in: query
  *       name: q
  *       type: string
@@ -49,6 +55,6 @@ const router = express.Router()
  *       200:
  *         description: Successful response
  */
-router.get('/search', (req: Request, res: Response) => ClinicController.search(req, res))
+router.get('/search', authenticate, (req: Request, res: Response) => ClinicController.search(req, res))
 
 export default router

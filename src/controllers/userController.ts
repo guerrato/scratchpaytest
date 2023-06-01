@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { User } from '../models/user'
 import httpResponse from '../lib/responses'
 import BaseController, { IBaseController } from './baseControllers'
+import { token } from '../middlewares/authenticate'
 
 // In-memory user storage just for example
 const users: User[] = [
@@ -23,7 +24,9 @@ export class UserController extends BaseController implements IUserController {
         return res.status(401).json(httpResponse({ error: 'Invalid credentials' }))
       }
 
-      return res.json(httpResponse<boolean>({ data: true }))
+      return res.json(
+        httpResponse<any>({ data: token, message: 'Use the token in data into x-auth-token for authenticated routes' })
+      )
     } catch (error) {
       if (error instanceof Error) {
         return res.status(400).json(httpResponse({ error: error.message }))

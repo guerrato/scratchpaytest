@@ -6,9 +6,25 @@ const router = express.Router()
 /* GET users listing. */
 /**
  * @swagger
- * /users:
+ * /user:
  *   post:
  *     summary: login
+ *     requestBody:
+ *      required: true
+ *      content:
+ *        application/x-www-form-urlencoded:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              username:
+ *                type: string
+ *                description: "use: 'user1' if you want to authenticate"
+ *              password:
+ *                type: string
+ *                description: "use: 'password1' if you want to authenticate"
+ *            required:
+ *              - username
+ *              - password
  *     responses:
  *       200:
  *         description: Successful response
