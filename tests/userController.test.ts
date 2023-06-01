@@ -32,7 +32,11 @@ describe('UserController', () => {
       password: 'password1',
     })
     expect(res.status).toBe(200)
-    expect(res.body).toEqual({ success: true, data: true })
+    expect(res.body).toEqual({
+      success: true,
+      message: 'Use the token in data into x-auth-token for authenticated routes',
+      data: '5f8a3b76-4998-4e22-a3b7-84f22c9a12d3',
+    })
   })
 
   it('should return an error response for invalid credentials', async () => {
