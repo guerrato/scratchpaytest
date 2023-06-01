@@ -3,7 +3,7 @@ import path from 'path'
 import cookieParser from 'cookie-parser'
 import logger from 'morgan'
 import indexRouter from './routes/index'
-import { setupSwagger } from './swaggerConfig'
+import { setupSwagger } from './swagger'
 
 const app = express()
 
