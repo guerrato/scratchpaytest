@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md}' --config ./.prettierrc",
-    "dev": "rm -rf ./dist && ./node_modules/nodemon/bin/nodemon.js -e ts  --exec \"npm run build && npm start \"",
-    "build": "npm run format && tsc && ./build.sh",
-    "start": "npm run build && node ./dist/www",
+    "dev": "./node_modules/nodemon/bin/nodemon.js -e ts --exec \"npm run build && npm start \"",
+    "build": "rm -rf ./dist && npm run format && tsc && ./build.sh",
+    "start": "node ./dist/www",
     "test": "jest"
   },
   "dependencies": {
