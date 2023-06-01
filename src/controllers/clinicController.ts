@@ -10,11 +10,12 @@ export interface IClinicController extends IBaseController {
 export class ClinicController extends BaseController implements IClinicController {
   async search(req: Request, res: Response): Promise<Response> {
     try {
-      let type = undefined
-      const { q, state, from, to, page = 1, limit = 10 } = (req.query as any) ?? {}
+      const { q, state, from, to, type, page = 1, limit = 10 } = (req.query as any) ?? {}
 
-      if (req.params.type && !['vet', 'dental'].includes(req.params.type)) {
-        throw new Error('Invalid type. It must be vet or dental')
+      if (type) {
+        if (!['vet', 'dental'].includes(type)) {
+          throw new Error('Invalid type. It must be vet or dental')
+        }
       }
 
       const result = await searchClinic({

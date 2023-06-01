@@ -14,39 +14,6 @@ function isTimeValid(from: string, to: string): boolean {
   return toTime > fromTime
 }
 
-/* describe('Clinic Endpoint', () => {
-  let clinicList: Clinic[];
-
-  beforeEach(() => {
-    
-
-  it('should have three clinics in the list', () => {
-    expect(clinicList).toHaveLength(3);
-  });
-
-  it('should have correct name, stateName, and availability for each clinic', () => {
-    clinicList.forEach((clinic) => {
-      expect(clinic.name).toBeDefined();
-      expect(typeof clinic.name).toBe('string');
-
-      expect(clinic.stateName).toBeDefined();
-      expect(typeof clinic.stateName).toBe('string');
-
-      expect(clinic.availability).toBeDefined();
-      expect(typeof clinic.availability).toBe('object');
-
-      expect(clinic.availability.from).toBeDefined();
-      expect(typeof clinic.availability.from).toBe('string');
-      expect(clinic.availability.from).toMatch(/^\d{2}:\d{2}$/);
-
-      expect(clinic.availability.to).toBeDefined();
-      expect(typeof clinic.availability.to).toBe('string');
-      expect(clinic.availability.to).toMatch(/^\d{2}:\d{2}$/);
-      expect(clinic.availability.to).toBeGreaterThan(clinic.availability.from);
-    });
-  });
-}); */
-
 describe('GET /clinic/search', () => {
   it('should return search results with pagination', async () => {
     const searchTerm = 'test'
@@ -126,6 +93,18 @@ describe('GET /clinic/search', () => {
     expect(response.body.data.limit).toBe(10)
   })
 
+  it('should return a 400 error with invalid type message', async () => {
+    const type = 'invalid-type'
+    const page = 1
+    const limit = 10
+
+    const response = await request(app).get('/clinic/search').query({ type, page, limit })
+
+    expect(response.status).toBe(400)
+    expect(response.body.success).toBe(false)
+    expect(response.body.error).toBe('Invalid type. It must be vet or dental')
+  })
+
   it('should have correct name, stateName, and availability for each clinic', async () => {
     const searchTerm = 'mayo clinic'
     const page = 1
@@ -167,5 +146,45 @@ describe('GET /clinic/search', () => {
 
     const { from, to } = clinic.availability
     expect(isTimeValid(from, to)).toBe(true)
+  })
+
+  it('should return 20 records of dental clinics with pagination', async () => {
+    const type = 'dental'
+    const page = 1
+    const limit = 20
+
+    const response = await request(app).get('/clinic/search').query({ type, page, limit })
+
+    expect(response.status).toBe(200)
+    expect(response.body.data.results.length).toBe(20)
+
+    for (const clinic of response.body.data.results) {
+      expect(clinic.type).toBe(type)
+    }
+
+    expect(response.body.data.totalResults).toBeGreaterThanOrEqual(20)
+    expect(response.body.data.totalPages).toBeGreaterThanOrEqual(1)
+    expect(response.body.data.currentPage).toBe(page)
+    expect(response.body.data.limit).toBe(limit)
+  })
+
+  it('should return 20 records of vet clinics with pagination', async () => {
+    const type = 'vet'
+    const page = 1
+    const limit = 20
+
+    const response = await request(app).get('/clinic/search').query({ type, page, limit })
+
+    expect(response.status).toBe(200)
+    expect(response.body.data.results.length).toBe(20)
+
+    for (const clinic of response.body.data.results) {
+      expect(clinic.type).toBe(type)
+    }
+
+    expect(response.body.data.totalResults).toBeGreaterThanOrEqual(20)
+    expect(response.body.data.totalPages).toBeGreaterThanOrEqual(1)
+    expect(response.body.data.currentPage).toBe(page)
+    expect(response.body.data.limit).toBe(limit)
   })
 })

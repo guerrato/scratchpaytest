@@ -9,7 +9,7 @@ export type SearchOptions = {
   state?: string
   from?: string
   to?: string
-  type?: 'vet' | 'dental'
+  type?: 'vet' | 'dental' | undefined
 }
 
 export type SearchClinicProps = {
@@ -184,61 +184,6 @@ export async function searchClinic(props: SearchClinicProps): Promise<SearchResu
   })
 }
 
-/* export async function searchClinic(props: SearchClinicProps): Promise<SearchResults> {
-  const { options, page = 1, limit = 10 } = props
-  const results: Clinic[] = []
-  let currentPage: Clinic[] = []
-  let pageIndex = 0
-  let partialJson = ''
-
-  return new Promise<SearchResults>((resolve, reject) => {
-    const readStream = fs.createReadStream(FILE_PATH, { encoding: 'utf8' })
-
-    readStream.on('data', (chunk: string) => {
-      const trimmedChunk = chunk.trim()
-      partialJson += trimmedChunk
-
-      try {
-        const objects = parseJsonObjects(partialJson)
-        let clinics: Clinic[] = objects.map(o => formatData(o))
-        clinics = clinics.filter(c => isValidClinic(c, options ?? {}))
-        currentPage.push(...clinics)
-
-        while (currentPage.length >= limit) {
-          if (pageIndex + 1 === page) {
-            results.push(...currentPage.splice(0, limit))
-          } else {
-            currentPage.splice(0, limit)
-          }
-          pageIndex++
-        }
-
-        partialJson = '' // Reset the partial JSON
-      } catch (error) {
-        // Incomplete JSON, wait for more data
-      }
-    })
-
-    readStream.on('end', () => {
-      if (currentPage.length > 0 && pageIndex + 1 === page) {
-        results.push(...currentPage)
-      }
-
-      resolve({
-        results,
-        totalResults: 0,
-        totalPages: results.length > 0 ? pageIndex + 1 : 0,
-        currentPage: page,
-        limit,
-      })
-    })
-
-    readStream.on('error', error => {
-      reject(error)
-    })
-  })
-} */
-
 function parseJsonObjects(input: string): JsonObject[] {
   const objects: JsonObject[] = []
   let startIndex = 0
@@ -276,7 +221,3 @@ function findMatchingClosingBrace(input: string, startIndex: number): number {
   }
   return -1
 }
-
-/* readStream.on('end', () => {
-      resolve({ results, totalResults: 0, totalPages: 0, currentPage: 0, limit: 0 })
-    }) */
